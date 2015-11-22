@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0145E5641C021F8E00EB8A95 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0145E5631C021F8E00EB8A95 /* README.md */; };
 		01F0C6C71C0070D40067425F /* NagiosServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01F0C6C61C0070D40067425F /* NagiosServer.m */; };
 		77740C9A18EF91EC0094E659 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77740C9918EF91EC0094E659 /* Cocoa.framework */; };
 		77740CA618EF91EC0094E659 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77740CA518EF91EC0094E659 /* main.m */; };
@@ -17,7 +18,7 @@
 		77740CB918EF91ED0094E659 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77740CB818EF91ED0094E659 /* XCTest.framework */; };
 		77740CBA18EF91ED0094E659 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77740C9918EF91EC0094E659 /* Cocoa.framework */; };
 		77740CC218EF91EE0094E659 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 77740CC018EF91EE0094E659 /* InfoPlist.strings */; };
-		77740CC418EF91EE0094E659 /* MacNagiosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 77740CC318EF91EE0094E659 /* MacNagiosTests.m */; };
+		77740CC418EF91EE0094E659 /* IFICNagiosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 77740CC318EF91EE0094E659 /* IFICNagiosTests.m */; };
 		77740CD418EF92A10094E659 /* nagios-icon-smaller-green.png in Resources */ = {isa = PBXBuildFile; fileRef = 77740CCE18EF92A10094E659 /* nagios-icon-smaller-green.png */; };
 		77740CD518EF92A10094E659 /* nagios-icon-smaller-orange.png in Resources */ = {isa = PBXBuildFile; fileRef = 77740CCF18EF92A10094E659 /* nagios-icon-smaller-orange.png */; };
 		77740CD618EF92A10094E659 /* nagios-icon-smaller-red.png in Resources */ = {isa = PBXBuildFile; fileRef = 77740CD018EF92A10094E659 /* nagios-icon-smaller-red.png */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0145E5631C021F8E00EB8A95 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0190F9BC1C00F1ED0055A6CA /* OldStuff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OldStuff.h; sourceTree = "<group>"; };
 		0190F9BD1C00F1ED0055A6CA /* OldStuff.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OldStuff.m; sourceTree = "<group>"; };
 		01F0C6C51C0070D40067425F /* NagiosServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NagiosServer.h; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 		77740C8D18EF91EC0094E659 = {
 			isa = PBXGroup;
 			children = (
+				0145E5631C021F8E00EB8A95 /* README.md */,
 				77740C9F18EF91EC0094E659 /* IFICNagios */,
 				77740CBD18EF91ED0094E659 /* IFICNagiosTests */,
 				77740C9818EF91EC0094E659 /* Frameworks */,
@@ -295,6 +298,7 @@
 			files = (
 				77740CAD18EF91EC0094E659 /* AppDelegate.m in Sources */,
 				77740CA618EF91EC0094E659 /* main.m in Sources */,
+				0145E5641C021F8E00EB8A95 /* README.md in Sources */,
 				01F0C6C71C0070D40067425F /* NagiosServer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
