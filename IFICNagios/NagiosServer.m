@@ -75,12 +75,13 @@
     self.name=[server objectForKey:@"itemName"];
     self.adminURL=[[NSURL alloc] initWithString:[server objectForKey:@"adminURL"]];
     self.URL=[[NSURL alloc] initWithString:urlStr];
-    
+    self.ignoreSSLErrors=[[server objectForKey:@"ignoreSSLErrors"] boolValue];
     self.configData=[MacNagiosAppDelegate configFile];
     NSNumber *checkFrequencySeconds = [self.configData valueForKey:@"checkFrequencySeconds"];
     NSLog(@"checkFrequencySeconds: %@", checkFrequencySeconds);
     
     NSInteger checkFrequencySecondsInt = [checkFrequencySeconds integerValue];
+    
     
     [NSTimer scheduledTimerWithTimeInterval:1
                                      target:self
@@ -132,7 +133,8 @@
 
 - (void)timeoutHandler:(id)arg
 {
-    
+    if(self.connection!=nil)
+        return;
     if(nil==self.serviceStatusDict)
     {
         self.serviceStatusDict=[NSMutableDictionary dictionary];
@@ -148,194 +150,56 @@
     
     
     
-    //for (int i = 0; i < [serversArray count]; i++)
+    NSString *username = self.username;
+    NSString *password = self.password;
+        
+    // Prepare the link that is going to be used on the GET request
+    NSURL * url = self.URL;
+    
+    
+    //[NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[url host]];
+    
+    
+    // Prepare the request object
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url
+                                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
+                                                          timeoutInterval:30];
+    
+    if (username != nil && [username length] > 0)
     {
-        //        assert(0);
-        //Iniciar la estructura de servidores
-        //NSDictionary *server = [serversArray objectAtIndex:i];
-        NSString *username = self.username;
-        NSString *password = self.password;
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+        NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
         
-        // Prepare the link that is going to be used on the GET request
-        NSURL * url = self.URL;
-        
-        
-        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[url host]];
-        
-        
-        // Prepare the request object
-        NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url
-                                                                  cachePolicy:NSURLRequestReloadIgnoringCacheData
-                                                              timeoutInterval:30];
-        
-        if (username != nil && [username length] > 0)
-        {
-            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
-            NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-            
-            NSString *authValue;
-            if ([authData respondsToSelector:@selector(base64EncodedDataWithOptions:)]) { // base64EncodedDataWithOptions is 10.9+, tks to Volen Davidov for the tip
-                authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:0]];
-            } else {
-                authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:0]];
-            }
-            
-            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+        NSString *authValue;
+        if ([authData respondsToSelector:@selector(base64EncodedDataWithOptions:)]) { // base64EncodedDataWithOptions is 10.9+, tks to Volen Davidov for the tip
+            authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:0]];
+        } else {
+            authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:0]];
         }
         
-        // Prepare the variables for the JSON response
-
-        
-        // Make synchronous request
-        /*
-        urlData = [NSURLConnection sendSynchronousRequest:urlRequest
-                                        returningResponse:&response
-                                                    error:&error];
-         */
-
-        [NSURLConnection sendAsynchronousRequest:urlRequest
-                                           queue:queue()
-                               completionHandler:^(NSURLResponse *response, NSData * urlData,NSError *error) {
-                                   if (error != nil)
-                                   {
-                                       NSLog(@"Error while getting URL %@: %@", url, error);
-                                       NSLog(@"urlData: %@", [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding]);
-                                       
-                                       // add empty dictionary
-                                       NSMutableDictionary *errorDict = [[NSMutableDictionary alloc] init];
-                                       [errorDict setObject:@"error getting URL" forKey:@"_error"];
-                                       [errorDict setObject:self.name forKey:@"_name"];
-                                       [errorDict setObject:[self.adminURL absoluteString] forKey:@"_server"];
-                                       //[results addObject:errorDict];
-                                       NSLog(@"%@",errorDict);
-                                       
-                                       return;
-                                   }
-                                   
-                                   // Construct a Array around the Data from the response
-                                   NSDictionary* object = [NSJSONSerialization
-                                                           JSONObjectWithData:urlData
-                                                           options:0
-                                                           error:&error];
-                                   
-                                   
-                                   int okCount = 0;
-                                   int warnCount = 0;
-                                   int critCount = 0;
-                                   int unkCount = 0;
-                                   int totalCount = 0;
-                                   
-                                   
-                                   NSDictionary* host_with_services = [object objectForKey:@"services"];
-                                   
-                                   if (host_with_services == nil)
-                                   {
-                                       // add empty dictionary
-                                       NSMutableDictionary *errorDict = [[NSMutableDictionary alloc] init];
-                                       [errorDict setObject:@"no 'services' entry, can't parse" forKey:@"_error"];
-                                       [errorDict setObject:self.name forKey:@"_name"];
-                                       [errorDict setObject:[self.adminURL absoluteString] forKey:@"_server"];
-                                       //[results addObject:errorDict];
-                                       NSLog(@"%@",errorDict);
-                                       return;
-                                   }
-                                   
-                                   // each individual host
-                                   
-                                   
-                                   for (NSString *hostKey in host_with_services)
-                                   {
-                                       
-                                       NSDictionary *hostDict = [host_with_services objectForKey:hostKey];
-                                       
-                                       for ( NSString *serviceKey in hostDict) {
-                                           
-                                           NSDictionary *serviceDict = [hostDict objectForKey:serviceKey];
-                                           
-                                           // if SkipIfNotificationsDisabled, silently skip any services that don't have notifications enabled
-                                           NSNumber *notificationsDisabled = [self.configData objectForKey:@"SkipIfNotificationsDisabled"];
-                                           if ([notificationsDisabled intValue]) {
-                                               NSString *notificationsEnabled = [serviceDict valueForKey:@"notifications_enabled"];
-                                               if ([notificationsEnabled isEqualToString:@"0"])
-                                               {
-                                                   continue;
-                                               }
-                                           }
-                                           
-                                           NSString *stateNum = [serviceDict valueForKey:@"last_hard_state"];
-                                           if (stateNum == nil)
-                                           {
-                                               stateNum = [serviceDict valueForKey:@"current_state"];
-                                           }
-                                           switch ([stateNum intValue]) {
-                                               case 0:
-                                                   okCount++;
-                                                   break;
-                                               case 1:
-                                                   warnCount++;
-                                                   break;
-                                               case 2:
-                                                   critCount++;
-                                                   break;
-                                               case 3:
-                                               default:
-                                                   unkCount++;
-                                                   break;
-                                           }
-                                           
-                                           totalCount++;
-                                           
-                                           NSString *serviceStatusKey = [NSString stringWithFormat:@"%@/%@", hostKey, serviceKey];
-                                           NSString *message=nil;
-                                           NagiosService *nagiosService=self.serviceStatusDict[serviceStatusKey];
-                                           if(nagiosService==nil)
-                                           {
-                                               nagiosService=[NagiosService serviceWithStatusInfo:serviceDict];
-                                               nagiosService.parent=self;
-                                               self.serviceStatusDict[serviceStatusKey]=nagiosService;
-                                               [self.allServices addObject:nagiosService];
-                                               self.hasChanged=YES;
-                                               
-                                           }
-                                           else
-                                           {
-                                               message=[nagiosService updateValuesWithNewStatusInfo:serviceDict];
-                                           }
-                                           if ([message length] > 2)
-                                           {
-                                               [self.checkMessages addObject:@{@"date":[NSDate date],
-                                                                               @"info":message,
-                                                                               @"service":nagiosService}];
-                                               self.hasChanged=YES;
-                                           }
-                                           
-                                       }
-                                       
-                                   }
-                                   
-                                   self.okCount = okCount;
-                                   self.warnCount = warnCount;
-                                   self.critCount = critCount;
-                                   self.unkCount = unkCount;
-                                   self.totalCount = totalCount;
-                                   if(self.hasChanged)
-                                   {
-                                       [self.parent refreshMenu];
-                                   }
-                               }
-                               ];
-        
-        //NSURLConnection *connection=[[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
-        
-        
+        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+    }
+    
+    // Prepare the variables for the JSON response
+    
+    
+    // Make synchronous request
+    /*
+     urlData = [NSURLConnection sendSynchronousRequest:urlRequest
+     returningResponse:&response
+     error:&error];
+     */
+    
+    self.connection=[[NSURLConnection alloc] initWithRequest:urlRequest
+                                                    delegate:self
+                                            startImmediately:YES];
     
 }
 
 
-
 #pragma mark NSURLConnection Delegate Methods
 
--(void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+-(void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
@@ -347,12 +211,12 @@
     // so that we can append data to it in the didReceiveData method
     // Furthermore, this method is called each time there is a redirect so reinitializing it
     // also serves to clear it
-    _responseData = [[NSMutableData alloc] init];
+    self.responseData = [[NSMutableData alloc] init];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     // Append the new data to the instance variable you declared
-    [_responseData appendData:data];
+    [self.responseData appendData:data];
 }
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection
@@ -364,6 +228,31 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     // The request is complete and data has been received
     // You can parse the stuff in your instance variable now
+    NSError *anerror;
+    // Construct a Array around the Data from the response
+    NSDictionary* object = [NSJSONSerialization
+                            JSONObjectWithData:self.responseData
+                            options:0
+                            error:&anerror];
+    
+    if(nil!=anerror)
+    {
+        NSLog(@"Error while getting URL %@: %@", connection.originalRequest , anerror);
+        //NSLog(@"urlData: %@", [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding]);
+        
+        // add empty dictionary
+        NSMutableDictionary *errorDict = [[NSMutableDictionary alloc] init];
+        [errorDict setObject:@"error getting URL" forKey:@"_error"];
+        [errorDict setObject:self.name forKey:@"_name"];
+        [errorDict setObject:[self.adminURL absoluteString] forKey:@"_server"];
+        //[results addObject:errorDict];
+        NSLog(@"%@",errorDict);
+        
+        return;
+    }
+    self.connection=nil;
+    self.responseData=nil;
+    [self loadJsonFromServer:object];
     
 }
 
@@ -371,6 +260,119 @@
     // The request has failed for some reason!
     // Check the error var
 }
+
+
+
+
+
+
+-(void)loadJsonFromServer:(NSDictionary *)data
+{
+    int okCount = 0;
+    int warnCount = 0;
+    int critCount = 0;
+    int unkCount = 0;
+    int totalCount = 0;
+    
+    
+    NSDictionary* host_with_services = [data objectForKey:@"services"];
+    
+    if (host_with_services == nil)
+    {
+        // add empty dictionary
+        NSMutableDictionary *errorDict = [[NSMutableDictionary alloc] init];
+        [errorDict setObject:@"no 'services' entry, can't parse" forKey:@"_error"];
+        [errorDict setObject:self.name forKey:@"_name"];
+        [errorDict setObject:[self.adminURL absoluteString] forKey:@"_server"];
+        //[results addObject:errorDict];
+        NSLog(@"%@",errorDict);
+        return;
+    }
+    
+    // each individual host
+    
+    
+    for (NSString *hostKey in host_with_services)
+    {
+        
+        NSDictionary *hostDict = [host_with_services objectForKey:hostKey];
+        
+        for ( NSString *serviceKey in hostDict) {
+            
+            NSDictionary *serviceDict = [hostDict objectForKey:serviceKey];
+            
+            // if SkipIfNotificationsDisabled, silently skip any services that don't have notifications enabled
+            NSNumber *notificationsDisabled = [self.configData objectForKey:@"SkipIfNotificationsDisabled"];
+            if ([notificationsDisabled intValue]) {
+                NSString *notificationsEnabled = [serviceDict valueForKey:@"notifications_enabled"];
+                if ([notificationsEnabled isEqualToString:@"0"])
+                {
+                    continue;
+                }
+            }
+            
+            NSString *stateNum = [serviceDict valueForKey:@"last_hard_state"];
+            if (stateNum == nil)
+            {
+                stateNum = [serviceDict valueForKey:@"current_state"];
+            }
+            switch ([stateNum intValue]) {
+                case 0:
+                    okCount++;
+                    break;
+                case 1:
+                    warnCount++;
+                    break;
+                case 2:
+                    critCount++;
+                    break;
+                case 3:
+                default:
+                    unkCount++;
+                    break;
+            }
+            
+            totalCount++;
+            
+            NSString *serviceStatusKey = [NSString stringWithFormat:@"%@/%@", hostKey, serviceKey];
+            NSString *message=nil;
+            NagiosService *nagiosService=self.serviceStatusDict[serviceStatusKey];
+            if(nagiosService==nil)
+            {
+                nagiosService=[NagiosService serviceWithStatusInfo:serviceDict];
+                nagiosService.parent=self;
+                self.serviceStatusDict[serviceStatusKey]=nagiosService;
+                [self.allServices addObject:nagiosService];
+                self.hasChanged=YES;
+                
+            }
+            else
+            {
+                message=[nagiosService updateValuesWithNewStatusInfo:serviceDict];
+            }
+            if ([message length] > 2)
+            {
+                [self.checkMessages addObject:@{@"date":[NSDate date],
+                                                @"info":message,
+                                                @"service":nagiosService}];
+                self.hasChanged=YES;
+            }
+            
+        }
+        
+    }
+    
+    self.okCount = okCount;
+    self.warnCount = warnCount;
+    self.critCount = critCount;
+    self.unkCount = unkCount;
+    self.totalCount = totalCount;
+    if(self.hasChanged)
+    {
+        [self.parent refreshMenu];
+    }
+}
+
 @end
 
 

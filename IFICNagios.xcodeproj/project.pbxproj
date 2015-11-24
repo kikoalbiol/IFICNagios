@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0145E5641C021F8E00EB8A95 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 0145E5631C021F8E00EB8A95 /* README.md */; };
+		0145E57B1C04EBB400EB8A95 /* IFICNSURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 0145E57A1C04EBB400EB8A95 /* IFICNSURLSession.m */; };
 		01F0C6C71C0070D40067425F /* NagiosServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01F0C6C61C0070D40067425F /* NagiosServer.m */; };
 		77740C9A18EF91EC0094E659 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77740C9918EF91EC0094E659 /* Cocoa.framework */; };
 		77740CA618EF91EC0094E659 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77740CA518EF91EC0094E659 /* main.m */; };
@@ -40,6 +41,8 @@
 
 /* Begin PBXFileReference section */
 		0145E5631C021F8E00EB8A95 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0145E5791C04EBB400EB8A95 /* IFICNSURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IFICNSURLSession.h; sourceTree = "<group>"; };
+		0145E57A1C04EBB400EB8A95 /* IFICNSURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IFICNSURLSession.m; sourceTree = "<group>"; };
 		0190F9BC1C00F1ED0055A6CA /* OldStuff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OldStuff.h; sourceTree = "<group>"; };
 		0190F9BD1C00F1ED0055A6CA /* OldStuff.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OldStuff.m; sourceTree = "<group>"; };
 		01F0C6C51C0070D40067425F /* NagiosServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NagiosServer.h; sourceTree = "<group>"; };
@@ -145,6 +148,8 @@
 				77740CA018EF91EC0094E659 /* Supporting Files */,
 				0190F9BC1C00F1ED0055A6CA /* OldStuff.h */,
 				0190F9BD1C00F1ED0055A6CA /* OldStuff.m */,
+				0145E5791C04EBB400EB8A95 /* IFICNSURLSession.h */,
+				0145E57A1C04EBB400EB8A95 /* IFICNSURLSession.m */,
 			);
 			path = IFICNagios;
 			sourceTree = "<group>";
@@ -296,6 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0145E57B1C04EBB400EB8A95 /* IFICNSURLSession.m in Sources */,
 				77740CAD18EF91EC0094E659 /* AppDelegate.m in Sources */,
 				77740CA618EF91EC0094E659 /* main.m in Sources */,
 				0145E5641C021F8E00EB8A95 /* README.md in Sources */,

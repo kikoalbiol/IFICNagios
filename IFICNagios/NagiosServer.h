@@ -20,6 +20,7 @@
 @property (retain) NSTimer *timer;
 @property (assign) CGFloat checkFrequencySecondsInt;
 @property (retain) NSDictionary *configData;
+@property (retain) NSMutableData *responseData;
 
 @property (retain) NSMutableDictionary *serviceStatusDict;
 @property (retain) NSArrayController *checkMessages;
@@ -33,6 +34,8 @@
 
 @property (readonly) NSString *statusString;
 @property (assign) BOOL hasChanged;
+@property (assign) BOOL ignoreSSLErrors;
+@property (retain) NSURLConnection *connection;
 
 -(IBAction)openURL:(id)sender;
 
@@ -43,6 +46,9 @@
 
 
 -(BOOL)checkChangesAndRestoreStatus;
+
+
+-(void)loadJsonFromServer:(NSDictionary *)data;
 @end
 /**
  *  @brief  The corresponding cellview
