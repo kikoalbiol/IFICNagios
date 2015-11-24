@@ -39,7 +39,8 @@
               @"itemName":@"New hostname",
               @"username":@"operator",
               @"password":@"xxxxxxxxxxxx",
-              @"url":@"https://ahost_remote.ific.uv.es/nagios/statusJson.php",} mutableCopy];
+              @"url":@"https://ahost_remote.ific.uv.es/nagios/statusJson.php",
+              @"ignoreSSLErrors":@(NO)} mutableCopy];
 }
 
 +(NSMutableDictionary *)configurationTemplate
@@ -55,14 +56,29 @@
 
 +(NSMutableDictionary *)configFile
 {
-    NSDictionary *config = nil;
+    NSMutableDictionary *config = nil;
 
     for (NSString *path in [MacNagiosAppDelegate configPaths])
     {
-        config = [NSDictionary dictionaryWithContentsOfFile:path];
+        config = [NSMutableDictionary dictionaryWithContentsOfFile:path];
         if (config != nil) { return [config mutableCopy]; }
     }
-    return [MacNagiosAppDelegate configurationTemplate];
+    config=[MacNagiosAppDelegate configurationTemplate];
+    if(config[@"servers"])
+    {
+        NSMutableArray *newservers=[NSMutableArray array];
+        for(NSDictionary *adict in config[@"servers"])
+        {
+            NSMutableDictionary *toinsert=[adict mutableCopy];
+            if(nil==toinsert[@"ignoreSSLErrors"])
+            {
+                toinsert[@"ignoreSSLErrors"]=@(NO);
+            }
+            [newservers addObject:toinsert];
+        }
+        
+    }
+    return config;
 }
 
 -(NSInteger)minTimeInSecondsConfig

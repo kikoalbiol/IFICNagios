@@ -263,6 +263,11 @@
                                                                                     <font key="font" metaFont="smallSystem"/>
                                                                                 </buttonCell>
                                                                                 <connections>
+                                                                                    <binding destination="0ls-cp-wSS" name="target" keyPath="objectValue" previousBinding="vzi-gC-jyj" id="OrX-x6-XTP">
+                                                                                        <dictionary key="options">
+                                                                                            <string key="NSSelectorName">openURL:</string>
+                                                                                        </dictionary>
+                                                                                    </binding>
                                                                                     <binding destination="0ls-cp-wSS" name="argument" keyPath="objectValue.URLInformation" id="vzi-gC-jyj">
                                                                                         <dictionary key="options">
                                                                                             <string key="NSSelectorName">openURL:</string>
@@ -271,11 +276,6 @@
                                                                                     <binding destination="0ls-cp-wSS" name="hidden" keyPath="objectValue.hasServiceURLInformation" id="WvQ-Tq-2Xd">
                                                                                         <dictionary key="options">
                                                                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                                                                        </dictionary>
-                                                                                    </binding>
-                                                                                    <binding destination="0ls-cp-wSS" name="target" keyPath="objectValue" previousBinding="vzi-gC-jyj" id="OrX-x6-XTP">
-                                                                                        <dictionary key="options">
-                                                                                            <string key="NSSelectorName">openURL:</string>
                                                                                         </dictionary>
                                                                                     </binding>
                                                                                 </connections>
@@ -606,7 +606,7 @@
                                                                     <binding destination="Fhb-da-Kde" name="value" keyPath="arrangedObjects.username" id="4OT-JF-khQ"/>
                                                                 </connections>
                                                             </tableColumn>
-                                                            <tableColumn identifier="" width="164" minWidth="10" maxWidth="3.4028234663852886e+38" id="zcx-Ti-keB">
+                                                            <tableColumn identifier="" width="143" minWidth="10" maxWidth="3.4028234663852886e+38" id="zcx-Ti-keB">
                                                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Password">
                                                                     <font key="font" metaFont="smallSystem"/>
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -622,6 +622,21 @@
                                                                     <binding destination="Fhb-da-Kde" name="value" keyPath="arrangedObjects.password" id="yqn-cI-05W"/>
                                                                 </connections>
                                                             </tableColumn>
+                                                            <tableColumn identifier="" width="17" minWidth="10" maxWidth="3.4028234663852886e+38" headerToolTip="Ignore SSL Errors" id="ZwA-AU-sYO">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Ignore SSL Errors">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                                </tableHeaderCell>
+                                                                <buttonCell key="dataCell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="2VW-HP-BBG">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                                <connections>
+                                                                    <binding destination="Fhb-da-Kde" name="value" keyPath="arrangedObjects.ignoreSSLErrors" id="1vv-SD-dBw"/>
+                                                                </connections>
+                                                            </tableColumn>
                                                         </tableColumns>
                                                     </tableView>
                                                 </subviews>
@@ -630,11 +645,11 @@
                                             </clipView>
                                             <animations/>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="eMy-4E-Zrk">
-                                                <rect key="frame" x="1" y="164" width="624" height="16"/>
+                                                <rect key="frame" x="1" y="164" width="641" height="16"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <animations/>
                                             </scroller>
-                                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="SVf-7E-V5Z">
+                                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="SVf-7E-V5Z">
                                                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <animations/>
@@ -689,8 +704,8 @@
         <arrayController objectClassName="NagiosServer" id="VZn-9w-8jY" userLabel="serverList"/>
         <arrayController objectClassName="NagiosService" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="F1M-h5-lHE" userLabel="serviceList">
             <connections>
-                <binding destination="swG-CT-moJ" name="filterPredicate" keyPath="selection.predicate" id="Zrd-je-e2L"/>
                 <binding destination="VZn-9w-8jY" name="contentArray" keyPath="selection.allServices.arrangedObjects" id="7ds-7w-d0I"/>
+                <binding destination="swG-CT-moJ" name="filterPredicate" keyPath="selection.predicate" id="Zrd-je-e2L"/>
                 <binding destination="cM0-mz-DJr" name="sortDescriptors" keyPath="selection.sorter" previousBinding="Zrd-je-e2L" id="L8B-1B-QkD"/>
             </connections>
         </arrayController>

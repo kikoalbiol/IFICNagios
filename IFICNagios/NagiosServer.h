@@ -10,7 +10,7 @@
 @class MacNagiosAppDelegate;
 
 
-@interface NagiosServer : NSObject
+@interface NagiosServer : NSObject <NSURLConnectionDelegate>
 @property (assign) MacNagiosAppDelegate *parent;
 @property (retain) NSString *name;
 @property (retain) NSURL *URL;
@@ -36,7 +36,7 @@
 
 -(IBAction)openURL:(id)sender;
 
-+(instancetype)initFromDictionary:(NSDictionary *)adict;
+-(instancetype)initFromDictionary:(NSDictionary *)adict;
 +(instancetype)serverFromDictionary:(NSDictionary *)adict;
 +(NSString *)stateNumberToString:(NSInteger)stateNum;
 +(NSColor *)stateNumberToColor:(NSInteger)stateNum;
